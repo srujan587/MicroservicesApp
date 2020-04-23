@@ -1,0 +1,21 @@
+version: '2.0'
+services: 
+ eureka-server:
+  build : ./eurekaserver/eurekaserver
+  container_name: eureka-server
+  ports :
+    - 8761:8761
+  expose:
+    - 8761
+ auth-service:
+  build: ./authservice/authservice
+  container_name: auth-service
+  ports:
+    - 4444:4444
+  expose:
+    - 4444
+  depends_on:
+    - eureka-server
+  environment:
+    EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
+    EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
