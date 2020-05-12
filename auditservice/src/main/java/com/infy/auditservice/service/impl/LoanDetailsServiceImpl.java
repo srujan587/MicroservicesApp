@@ -22,7 +22,11 @@ public class LoanDetailsServiceImpl implements LoanDetailsService {
 	private LoanDetailsCustomRepositoty loanDetailsRepository;
 	
 	@Autowired
-	private LoanDetailsMongoDBRepo loanDetailsMongoDBRepo;	
+	private LoanDetailsMongoDBRepo loanDetailsMongoDBRepo;
+
+	public LoanDetailsServiceImpl(LoanDetailsCustomRepositoty loanDetailsRepository) {
+		this.loanDetailsRepository=loanDetailsRepository;
+	}
 
 	public void insertLoanDetails(Loan loan) {
 		logger.info("LoanDetailsServiceImpl::insertLoanDetails invoked");

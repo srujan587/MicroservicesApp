@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.infy.auditservice.service.impl.LoanDetailsServiceImpl;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -18,6 +20,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.infy.auditservice.exception.LoanAccountNotFoundException;
 import com.infy.auditservice.model.Loan;
 import com.infy.auditservice.repository.LoanDetailsCustomRepositoty;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoanDetailsServiceTest {
@@ -26,9 +29,13 @@ public class LoanDetailsServiceTest {
 	private LoanDetailsCustomRepositoty loanDetailsRepository;
 
 	private LoanDetailsService loanDetailsService;
+	@Before
+	public void setUp(){
+		loanDetailsService=new LoanDetailsServiceImpl(loanDetailsRepository);
+	}
 
 	@Test
-	public void getLoansByLoanAccount(String loanAccountNumber) {
+	public void getLoansByLoanAccount() {
 
 		Stream<Loan> listOfLoanStream = Arrays.stream(new Loan[] {
 				new Loan("5ea7fd8adbd71a888a0dc805", "704597", "Personal", new BigDecimal(500000), new BigDecimal(5000),
