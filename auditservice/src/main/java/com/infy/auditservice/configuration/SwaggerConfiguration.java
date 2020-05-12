@@ -1,5 +1,7 @@
 package com.infy.auditservice.configuration;
 
+import org.springframework.boot.actuate.trace.http.HttpTraceRepository;
+import org.springframework.boot.actuate.trace.http.InMemoryHttpTraceRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,6 +22,12 @@ public class SwaggerConfiguration {
 				.apis(RequestHandlerSelectors.basePackage("com.infy.auditservice.controller"))
 //				.paths(PathSelectors.ant("/loandetails/*"))
 				.build().apiInfo(apiInfo());
+	}
+	//Added for actuators
+	@Bean
+	public HttpTraceRepository htttpTraceRepository()
+	{
+	  return new InMemoryHttpTraceRepository();
 	}
 	
 	public ApiInfo apiInfo() {
