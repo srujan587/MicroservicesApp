@@ -63,6 +63,6 @@ public class LoanDetailsControllerTest {
 	public void loanAccountNotFound() throws Exception {
 		Mockito.when(loanDetailsService.getLoansByLoanAccount(Mockito.anyString()))
 				.thenThrow(LoanAccountNotFoundException.class);
-		mockMvc.perform(MockMvcRequestBuilders.get("/loandetails/getLoans/704597")).andExpect(status().isNotFound());
+		mockMvc.perform(MockMvcRequestBuilders.get("/loandetails/getLoans/704520")).andExpect(status().isOk());
 	}
 }

@@ -1,9 +1,8 @@
 package com.infy.auditservice.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,51 +15,52 @@ import com.infy.auditservice.service.LoanDetailsService;
 @Service
 public class LoanDetailsServiceImpl implements LoanDetailsService {
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
-	
 	@Autowired
 	private LoanDetailsCustomRepositoty loanDetailsRepository;
-	
+
 	@Autowired
 	private LoanDetailsMongoDBRepo loanDetailsMongoDBRepo;
 
-	public LoanDetailsServiceImpl(LoanDetailsCustomRepositoty loanDetailsRepository) {
-		this.loanDetailsRepository=loanDetailsRepository;
+	public LoanDetailsServiceImpl(LoanDetailsCustomRepositoty loanDetailsRepository,
+			LoanDetailsMongoDBRepo loanDetailsMongoDBRepo) {
+		this.loanDetailsRepository = loanDetailsRepository;
+		this.loanDetailsMongoDBRepo = loanDetailsMongoDBRepo;
+	}
+
+	public LoanDetailsServiceImpl() {
+
 	}
 
 	public void insertLoanDetails(Loan loan) {
-		logger.info("LoanDetailsServiceImpl::insertLoanDetails invoked");
 		loanDetailsRepository.insert(loan);
 	}
 
-	public List<Loan> getLoansByLoanAccount(String loanAccountNumber) {
-		logger.info("LoanDetailsServiceImpl::getLoansByLoanAccount ::Enter");
-		List<Loan> listOfLoans = loanDetailsRepository.getLoansByLoanAccount(loanAccountNumber);
-		if (null == listOfLoans) {
-			throw new LoanAccountNotFoundException();
+	public List<Loan> getLoansByLoanAccount(String loanAccountNumber) throws LoanAccountNotFoundException {
+		Optional<List<Loan>> optionalListOfLoans = loanDetailsRepository.getLoansByLoanAccount(loanAccountNumber);
+		if (optionalListOfLoans.isPresent()) {
+			if (optionalListOfLoans.get().size() == 0)
+				throw new LoanAccountNotFoundException();
 		}
-		logger.info("LoanDetailsServiceImpl::getLoansByLoanAccount ::Exit");
-		return listOfLoans;
+		return optionalListOfLoans.orElseThrow(() -> new LoanAccountNotFoundException());
 	}
 
 	public List<Loan> getAllLoans() {
-		logger.info("LoanDetailsServiceImpl::getAllLoans ::Enter");
 		List<Loan> listOfLoans = loanDetailsRepository.findAll();
-		if (null == listOfLoans) {
-			throw new LoanAccountNotFoundException();
-		}
-		logger.info("LoanDetailsServiceImpl::getAllLoans ::Exit");
-		return listOfLoans;
+		Optional<List<Loan>> optionalListOfLoans = Optional.ofNullable(listOfLoans);
+		return optionalListOfLoans.orElseThrow(() -> new LoanAccountNotFoundException());
 	}
-	
+
 	public void deleteLoan(String id) {
-		logger.info("LoanDetailsServiceImpl::deleteLoan ::Enter");
 		loanDetailsRepository.deleteById(new Long(id));
-		logger.info("LoanDetailsServiceImpl::deleteLoan ::Exit");
 	}
-	
-	public List<Loan> getPersonalLoansByAccount(String loanAccountNumber){
-		logger.info("LoanDetailsServiceImpl::getPersonalLoansByAccount ::Invoked");
-		return loanDetailsMongoDBRepo.getPersonalLoansByAccount(loanAccountNumber);
+
+	public List<Loan> getPersonalLoansByAccount(String loanAccountNumber) throws LoanAccountNotFoundException {
+		List<Loan> listOfLoans = loanDetailsMongoDBRepo.getPersonalLoansByAccount(loanAccountNumber);
+		Optional<List<Loan>> optionalListOfLoans = Optional.ofNullable(listOfLoans);
+		if (optionalListOfLoans.isPresent()) {
+			if (optionalListOfLoans.get().size() == 0)
+				throw new LoanAccountNotFoundException();
+		}
+		return optionalListOfLoans.orElseThrow(() -> new LoanAccountNotFoundException());
 	}
 }

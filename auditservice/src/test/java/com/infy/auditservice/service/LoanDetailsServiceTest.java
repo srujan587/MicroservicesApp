@@ -6,10 +6,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.infy.auditservice.service.impl.LoanDetailsServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,18 +20,22 @@ import org.mockito.junit.MockitoJUnitRunner;
 import com.infy.auditservice.exception.LoanAccountNotFoundException;
 import com.infy.auditservice.model.Loan;
 import com.infy.auditservice.repository.LoanDetailsCustomRepositoty;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import com.infy.auditservice.repository.LoanDetailsMongoDBRepo;
+import com.infy.auditservice.service.impl.LoanDetailsServiceImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoanDetailsServiceTest {
 
 	@Mock
 	private LoanDetailsCustomRepositoty loanDetailsRepository;
+	
+	@Mock
+	private LoanDetailsMongoDBRepo loanDetailsMongoDBRepo;
 
 	private LoanDetailsService loanDetailsService;
 	@Before
 	public void setUp(){
-		loanDetailsService=new LoanDetailsServiceImpl(loanDetailsRepository);
+		loanDetailsService=new LoanDetailsServiceImpl(loanDetailsRepository,loanDetailsMongoDBRepo);
 	}
 
 	@Test
@@ -44,7 +48,7 @@ public class LoanDetailsServiceTest {
 						LocalDateTime.now()) });
 
 		Mockito.when(loanDetailsRepository.getLoansByLoanAccount(Mockito.anyString()))
-				.thenReturn(listOfLoanStream.collect(Collectors.toList()));
+				.thenReturn(Optional.of(listOfLoanStream.collect(Collectors.toList())));
 		List<Loan> listOfLoans = loanDetailsService.getLoansByLoanAccount("704597");
 		assertThat(listOfLoans.get(0).getLoanAccountNumber()).isEqualTo("704597");
 	}
@@ -52,8 +56,8 @@ public class LoanDetailsServiceTest {
 	@Test(expected = LoanAccountNotFoundException.class)
 	public void loanAccountNotFound() throws Exception {
 		Mockito.when(loanDetailsRepository.getLoansByLoanAccount(Mockito.anyString()))
-				.thenReturn(null);
-		loanDetailsService.getLoansByLoanAccount("704597");
+				.thenThrow(new LoanAccountNotFoundException());
+		loanDetailsService.getLoansByLoanAccount("704520");
 	}
 
 }

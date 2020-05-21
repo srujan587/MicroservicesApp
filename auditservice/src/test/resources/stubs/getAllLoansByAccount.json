@@ -1,0 +1,10 @@
+{
+	"request": {
+		"urlPath": "/loandetails/getLoans/704597",
+		"method": "GET"
+	},
+	"response": {
+		"status": 200,
+		"body": [{"id": "1","loanAccountNumber": "704597"},{"id": "2","loanAccountNumber": "704597"}]
+	}
+}

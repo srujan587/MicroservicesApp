@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,8 +26,8 @@ public class LoanDetailsRepositoryTest {
 	@Test
 	public void getLoansByAccount() throws Exception {
 
-		List<Loan> listOfLoans = loanDetailsRepository.getLoansByLoanAccount("704597");
-		assertThat(listOfLoans.get(0).getLoanAccountNumber()).isEqualTo("704597");
+		Optional<List<Loan>> listOfLoans = loanDetailsRepository.getLoansByLoanAccount("704520");
+		assertThat(listOfLoans.get().get(0).getLoanAccountNumber()).isEqualTo("704597");
 	}
 
 	@Test
