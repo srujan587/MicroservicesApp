@@ -4,9 +4,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@FeignClient("account-service")
-public interface AccountDetailsFeignClient {
+@FeignClient("payroll-service")
+public interface PayrollDetailsFeignClient {
 
-    @RequestMapping("/accountDetails/account/{accountNumber}")
-    public String getAccountDetailsByAccount(@PathVariable("accountNumber") String accountNumber);
+    @RequestMapping("/payrolldetails/payroll/{accountNumber}")
+    public boolean getEligibilityFromPayrollDetails(@PathVariable("accountNumber") String accountNumber);
 }

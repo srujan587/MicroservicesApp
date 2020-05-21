@@ -1,21 +1,28 @@
-version: '2.0'
+version: '3.3'
 services: 
  eureka-server:
   build : ./eurekaserver/eurekaserver
-  container_name: eureka-server
   ports :
     - 8761:8761
-  expose:
-    - 8761
+  networks:
+    - microservices-network
  auth-service:
   build: ./authservice/authservice
-  container_name: auth-service
   ports:
     - 4444:4444
-  expose:
-    - 4444
+  networks:
+    - microservices-network
   depends_on:
     - eureka-server
-  environment:
-    EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
-    EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+ gatewy-service:
+  build: ./gateway/gateway
+  ports:
+    - 2222:2222
+  depends_on:
+    - eureka-server
+    - auth-service
+  networks:
+    - microservices-network
+networks:
+  microservices-network:
+   driver : bridge

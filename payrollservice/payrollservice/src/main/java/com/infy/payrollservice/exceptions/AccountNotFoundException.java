@@ -1,4 +1,7 @@
 package com.infy.payrollservice.exceptions;
 
-public class AccountNotFoundException {
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus
+public class AccountNotFoundException extends RuntimeException {
 }
